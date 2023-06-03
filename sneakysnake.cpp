@@ -48,7 +48,7 @@ int SneakySnake(int ReadLength, char* Ref, char* Que, int EditThreshold, int Kme
 		return 1;
 	}
 
-
+return 0;
 
 }
 

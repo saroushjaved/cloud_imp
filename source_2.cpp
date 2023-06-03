@@ -1,0 +1,74 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <chrono>
+#include <omp.h>
+using namespace std;
+const int N = 10000;
+const int no_threads = 8;
+
+int main() {
+    int lines = 100;
+
+    std::ifstream readfile("./dataset/long_1.txt");
+    if (!readfile) {
+        std::cout << "Please select a correct file." << std::endl;
+        return 1;
+    }
+
+    std::cout << "File has opened successfully." << std::endl;
+    std::cout << "There are a total of " << lines << " reads in the file." << std::endl;
+    std::cout << "Total number of threads being utilized: " << no_threads << std::endl;
+
+    int accepted_sum[no_threads] = {0};
+    int rejected_sum[no_threads] = {0};
+
+    auto startTime = std::chrono::high_resolution_clock::now();
+
+    #pragma omp parallel num_threads(no_threads)
+    {
+        int thread_id = omp_get_thread_num();
+        std::ifstream thread_readfile("./dataset/long_1.txt");
+
+        // Calculate the start and end indices for each thread
+        int start_index = thread_id * (lines / no_threads);
+        int end_index = (thread_id == no_threads - 1) ? lines : start_index + (lines / no_threads);
+
+        // Each thread processes a portion of the lines
+        for (int i = start_index; i < end_index; i++) {
+            std::string line;
+            std::getline(thread_readfile, line);
+            char ReadSeq[N + 1];
+            char RefSeq[N + 1];
+            std::strncpy(ReadSeq, line.c_str(), N);
+            std::strncpy(RefSeq, line.c_str() + N + 1, N);
+            int r = SneakySnake(N, RefSeq, ReadSeq, 25000, 0, 0, 0);
+            if (r == 1) {
+                #pragma omp atomic
+                accepted_sum[thread_id]++;
+            } else {
+                #pragma omp atomic
+                rejected_sum[thread_id]++;
+            }
+        }
+
+        thread_readfile.close();
+    }
+
+    int total_sum_acc = 0;
+    int total_sum_rej = 0;
+    for (int i = 0; i < no_threads; i++) {
+        total_sum_acc += accepted_sum[i];
+        total_sum_rej += rejected_sum[i];
+    }
+
+    auto stopTime = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stopTime - startTime);
+
+    std::cout << "Total Accepted Reads: " << total_sum_acc << std::endl;
+    std::cout << "Total Rejected Reads: " << total_sum_rej << std::endl;
+    std::cout << "Total Execution time for Sneaky Snake Algorithm (ms): " << duration.count() << std::endl;
+
+    return 0;
+}
+

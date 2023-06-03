@@ -13,9 +13,9 @@
 using namespace std;
 using namespace std::chrono;
 
-int lines = 100;
-const int N = 10000;
-const int no_threads = 8;
+int lines = 30000;
+const int N = 100;
+const int no_threads = 20;
 int Accepted[no_threads];
 int rejected[no_threads];
 
@@ -24,7 +24,7 @@ int main() {
 
 	
 	fstream readfile;
-	readfile.open("./dataset/long_1.txt", ios::in);
+	readfile.open("./dataset/100_bp_1.txt", ios::in);
 	if (!readfile) {
 		std::cout << "Please select a correct file." << endl;
 
@@ -55,16 +55,15 @@ int main() {
 			int i;
 			//int r;
 
-#pragma omp parallel for private(i, line) shared(size_read) reduction(+:accepted_sum, rejected_sum) 
-
-				for (int i = 0; i < 100; i++) {
+#pragma omp parallel for private(i, line) shared(size_read)
+		for (int i = 0; i < 30000; i++) {
 					
 					char ReadSeq[N + 1];
 					char RefSeq[N + 1];
 					getline(readfile, line);
-					strncpy_s(ReadSeq, line.c_str(), size_read);
-					strncpy_s(RefSeq, line.c_str() + size_read + 1, size_read);
-					int r = SneakySnake(size_read, RefSeq, ReadSeq, 25000, 0, 0, 0);
+					strncpy(ReadSeq, line.c_str(), size_read);
+					strncpy(RefSeq, line.c_str() + size_read + 1, size_read);
+					int r = SneakySnake(size_read, RefSeq, ReadSeq, 10, 0, 0, 0);
 					
 					if (r == 1) {
 #pragma omp atomic
