@@ -1,5 +1,6 @@
 # Sneaky Snake Cloud-Based Implementation
-**Authors**: Mahgul Adnan, Soroush Javed Sulehri 
+**Authors**: Mahgul Adnan, Soroush Javed Sulehri
+
 **Algoirthm Credit**: M. Alser, T. Shahroodi, J. Gomez-Luna, C. Alkan, and O. Mutlu, “SneakySnake: a fast and accurate universal genome Pre-Alignment filter for CPUs, GPUs, and FPGAs,” arXiv (Cornell University), Jan. 2019, doi: 10.48550/arxiv.1910.09020. 
 
 This repository contains the cloud-based implementation of the Sneaky Snake algorithm, which is part of a final year project based on the thesis "Hands on Algorithm Acceleration using Heterogeneous Computing Systems". The implementation was deployed on an Azure-based virtual machine to test and profile the performance of the Sneaky Snake algorithm in a cloud environment.
